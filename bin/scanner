@@ -1,1 +1,13 @@
 #!/usr/bin/php
+<?php
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+
+$loader = new \Composer\Autoload\ClassLoader();
+$loader->register();
+
+// $loader->setUseIncludePath(true);
+
+$app = new Application('scanner');
+$app->run();

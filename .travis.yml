@@ -3,4 +3,4 @@ language: php
 php:
   - 7.3
 
-script: phpunit test
+script: composer update && vendor/bin/phpunit test

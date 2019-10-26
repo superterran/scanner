@@ -1,0 +1,14 @@
+{
+    "name": "superterran/scanner",
+    "description": "uses web driver to observe the network traffic of a site, and compare it to a whitelist in order to detect malware",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Doug Hatcher",
+            "email": "superterran@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}

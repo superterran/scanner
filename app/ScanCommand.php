@@ -72,7 +72,7 @@ class ScanCommand extends Command
 
         $finder = new Finder();
 
-        $finder->files()->in(__DIR__.'/../targets/')->name('*.yml');
+        $finder->files()->in(getcwd().'/targets/')->name('*.yml');
 
         if ($finder->hasResults()) {
             foreach ($finder as $file) {

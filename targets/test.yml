@@ -1,2 +1,17 @@
 ---
-  url: https://wwww.google.com/
+- url: https://wwww.google.com/
+  params:
+    - key: hello
+      value: world
+      type: GET
+  headers:
+    - key: header
+      value: world
+- url: https://wwww.google.com/checkout/
+  params:
+    - key: hello
+      value: world
+      type: GET
+  headers:
+    - key: header
+      value: world    

@@ -1,0 +1,15 @@
+---
+- url: https://www.fossil.com/us/
+  whitelist:
+    - //www.fossil.com/
+    - //nexus.ensighten.com/
+    - //consumer.krxd.net
+    - //fossil.sc.omtrdc.net/
+    - //cdn.krxd.net/
+  params:
+    - key: hello
+      value: world
+      type: GET
+  headers:
+    - key: header
+      value: world

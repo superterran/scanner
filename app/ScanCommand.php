@@ -10,9 +10,13 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Remote\RemoteWebDriver;
 
 class ScanCommand extends Command
 {
+
+    public $whitelist = array();
 
     protected static $defaultName = 'scan';
     /**
@@ -81,12 +85,56 @@ class ScanCommand extends Command
 
     public function scanTarget($targetConfig) 
     {
+
+        $host = 'http://localhost:4444/wd/hub';
+      
+        $driver = RemoteWebDriver::create($host, DesiredCapabilities::firefox());
+
         foreach ($targetConfig as $target) {
             if (isset($target['url'])) {
-
-                var_dump($target['url']);    
-            }
-            
+                $driver->navigate()->to($target['url']);
+            }            
         }
+        $network = $driver->executeScript("return window.performance.getEntries();");
+
+        
+
+        foreach($network as $asset)
+        {         
+            $match = false;   
+            if($asset['initiatorType'] == 'script') {
+                foreach (array_merge($this->getWhitelist(), $target['whitelist']) as $whitelist) {
+                    if(strpos($asset['name'], $whitelist) !== false) {
+                        $match = true;
+                    }
+                }                     
+
+                if (!$match) var_dump($asset['name']);   
+                
+            }
+        }
+
+    }
+
+    protected function getWhitelist()
+    {
+
+        if(empty($this->whitelist)) {
+
+            $config = array();
+
+            $finder = new Finder();
+    
+            $finder->files()->in(__DIR__.'/../')->name('whitelist.yml');
+    
+            if ($finder->hasResults()) {
+                foreach ($finder as $file) {
+                    $whitelist = Yaml::parseFile($file->getRealPath());
+                }
+            }
+            $this->whitelist = $whitelist;    
+        }
+        
+        return $this->whitelist;
     }
 }

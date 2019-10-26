@@ -11,6 +11,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
 
 class ScanCommand extends Command
@@ -90,8 +91,16 @@ class ScanCommand extends Command
     {
 
         $host = 'http://localhost:4444/wd/hub';
-      
-        $driver = RemoteWebDriver::create($host, DesiredCapabilities::firefox());
+        $capabilities = DesiredCapabilities::chrome();
+
+        $options = new ChromeOptions();
+        $options->setBinary('/usr/bin/google-chrome');
+
+        $capabilities->setCapability(ChromeOptions::CAPABILITY, $options);
+
+
+
+        $driver = RemoteWebDriver::create($host, $capabilities);
 
         $targets = $targetConfig['targets'];
 

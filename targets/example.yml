@@ -1,6 +1,7 @@
 ---
 whitelist:
   - //www.google.com/
+  - //ogs.google.com/
 targets:
   - url: https://www.google.com/
     params:

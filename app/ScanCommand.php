@@ -114,34 +114,37 @@ class ScanCommand extends Command
 
                 $driver->navigate()->to($target['url']);
             }            
-        }
-        $network = $driver->executeScript("return window.performance.getEntries();");
+        
+            $network = $driver->executeScript("return window.performance.getEntries();");
+            
 
-        foreach($network as $asset)
-        {         
-            if ($this->output->isVerbose()) {
-                $this->output->writeln('asset: '. print_r($asset));
-            }
+            foreach($network as $asset)
+            {         
+                if ($this->output->isVerbose()) {
+                    $this->output->writeln('asset: '. print_r($asset));
+                }
 
-            if(isset($asset['name'])) {
-                $match = false;   
-                // if($asset['initiatorType'] == 'script') {
-                    foreach ($whitelist as $whiteurl) {
-                        if(strpos($asset['name'], $whiteurl) !== false) {
-                            $match = true;
+                if(isset($asset['name'])) {
+                    $match = false;   
+                    // if($asset['initiatorType'] == 'script') {
+                        foreach ($whitelist as $whiteurl) {
+                            if(strpos($asset['name'], $whiteurl) !== false) {
+                                $match = true;
+                            }
+                        }                     
+        
+                        if (!$match) {
+                            $this->output->writeln('fails - '.$asset['name']);   
                         }
-                    }                     
-    
-                    if (!$match) {
-                        $this->output->writeln('fails - '.$asset['name']);   
-                    }
-                    
-                // }
-            } else {
-                throw new \Exception("Assets aren't returning from the webdriver!");
+                        
+                    // }
+                } else {
+                    throw new \Exception("Assets aren't returning from the webdriver!");
+                }
             }
         }
 
+        $driver->quit();
     }
 
     protected function getWhitelist()

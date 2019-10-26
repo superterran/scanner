@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+
 require_once getcwd().'/vendor/autoload.php';
 
 use Superterran\Scanner;

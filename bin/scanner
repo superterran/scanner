@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once getcwd().'/vendor/autoload.php';
 
 use Superterran\Scanner;
 use Symfony\Component\Console\Application;

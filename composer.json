@@ -21,5 +21,8 @@
         "psr-4": {
             "Superterran\\Scanner\\": "app"
           }
-    }
+    },
+    "bin": [
+        "bin/scanner"
+    ]
 }

@@ -1,2 +1,2 @@
-# superterran malware detector
+# superterran malware scanner
 

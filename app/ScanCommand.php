@@ -20,6 +20,8 @@ class ScanCommand extends Command
     public $output = false;
     public $whitelist = array();
 
+    public const ignoreEntryTypes = ['paint', 'measure', 'mark'];
+
     protected static $defaultName = 'scan';
     /**
      * Apply a branch non-required argument to all classes that will use this.
@@ -129,29 +131,38 @@ class ScanCommand extends Command
 
             foreach($network as $asset)
             {         
-                if ($this->output->isVerbose()) {
-                    $this->output->writeln('asset: '. print_r($asset));
-                }
+                if (isset($asset['entryType']) && !in_array($asset['entryType'], self::ignoreEntryTypes)) {
 
-                if(isset($asset['name'])) {
-                    $match = false;   
-                    // if($asset['initiatorType'] == 'script') {
-                        foreach ($whitelist as $whiteurl) {
-                            if(strpos($asset['name'], $whiteurl) !== false) {
-                                $match = true;
+                    if ($this->output->isDebug()) {
+                        $this->output->writeln('asset: ');
+                        $this->output->writeln(print_r($asset));
+                    }
+    
+                    if(isset($asset['name'])) {
+                        $match = false;   
+                        // if($asset['initiatorType'] == 'script') {
+                            foreach ($whitelist as $whiteurl) {
+                                if(strpos($asset['name'], $whiteurl) !== false) {
+                                    $match = true;
+                                }
+                            }                     
+            
+                            if (!$match) {
+                                $this->output->writeln('fails - '.$asset['name']);
+                                if ($this->output->isVerbose()) {
+                                    $this->output->writeln(print_r($asset));
+                                }   
                             }
-                        }                     
-        
-                        if (!$match) {
-                            $this->output->writeln('fails - '.$asset['name']);
-                            if ($this->output->isDebug()) {
-                                $this->output->writeln(print_r($asset['name']));
-                            }   
-                        }
-                        
-                    // }
+                            
+                        // }
+                    } else {
+                        throw new \Exception("Assets aren't returning from the webdriver!");
+                    }
                 } else {
-                    throw new \Exception("Assets aren't returning from the webdriver!");
+                    if ($this->output->isDebug()) {
+                        $this->output->writeln('ignoring '.$asset['name'].' because entry is '.$asset['entryType']);
+                        $this->output->writeln(print_r($asset));
+                    }
                 }
             }
         }

@@ -134,7 +134,10 @@ class ScanCommand extends Command
                         }                     
         
                         if (!$match) {
-                            $this->output->writeln('fails - '.$asset['name']);   
+                            $this->output->writeln('fails - '.$asset['name']);
+                            if ($this->output->isDebug()) {
+                                $this->output->writeln(print_r($asset['name']));
+                            }   
                         }
                         
                     // }
@@ -177,6 +180,7 @@ class ScanCommand extends Command
 
             if ($this->output->isDebug()) {
                 $this->output->writeln('final whitelist: '. print_r($this->whitelist));
+                $this->output->writeln(print_r($this->whitelist));
             }
         }
         

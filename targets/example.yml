@@ -1,0 +1,20 @@
+---
+whitelist:
+  - //www.google.com/
+targets:
+  - url: https://www.google.com/
+    params:
+      - key: hello
+        value: world
+        type: GET
+    headers:
+      - key: header
+        value: world
+  - url: https://www.google.com/search
+    params:
+      - key: hello
+        value: world
+        type: GET
+    headers:
+      - key: header
+        value: world        

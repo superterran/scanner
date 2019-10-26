@@ -1,6 +1,6 @@
 <?php
 
-namespace Superterran\Scanner\Command;
+namespace Superterran\Scanner;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -44,6 +44,6 @@ class ScanCommand extends Command
             $output->writeln("Run all");
         }
         
-        return;
+        return true;
     }
 }

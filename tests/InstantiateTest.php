@@ -4,7 +4,7 @@ namespace Superterran\Scanner\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-class AppInstantiateTest extends TestCase
+class InstantiateTest extends TestCase
 {
     /**
      * @return void

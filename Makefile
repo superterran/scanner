@@ -6,7 +6,7 @@ help: ## This help
 
 .DEFAULT_GOAL := help
 selenium-start-docker: ## launches selenium from a docker container
-	docker run -v /dev/shm:/dev/shm -m 8g -p 4444:4444 selenium/standalone-chrome-debug:3.6.0-bromine
+	docker run --network host -e JAVA_OPTS="-Dwebdriver.chrome.whitelistedIps=" -v /dev/shm:/dev/shm -m 8g -p 4444:4444 selenium/standalone-chrome-debug:3.6.0-bromine
 selenium-start-firefox-docker: ## launches selenium from a docker container
 	docker run -p 4444:4444 selenium/standalone-firefox
 tests: ## runs unit tests
@@ -21,3 +21,6 @@ selenium-hub-docker: ## create a selenium hub using a docker grid
 	#docker network create grid
 	docker run -d -p 4444:4444 --net grid --name selenium-hub selenium/hub:3.141.59-xenon
 	docker run --net grid -e HUB_HOST=selenium-hub -v /dev/shm:/dev/shm selenium/node-chrome:3.141.59-xenon
+selenium-hub-docker-stop:
+	docker stop selenium-hub
+	docker rm selenium-hub

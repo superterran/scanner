@@ -51,8 +51,6 @@ class ScanCommand extends Command
         $config = $this->getConfig();
 
         if ($target) {
-            $output->writeln("Target: " .$target);
-
             if(isset($config[$target.'.yml'])) {
                 $this->scanTarget($config[$target.'.yml']);
             } else {
@@ -62,8 +60,9 @@ class ScanCommand extends Command
         } else {
             $output->writeln("Run all");
             
-            var_dump($config);
-          //  $this->scanTarget($target);
+            foreach($config as $target) {
+                $this->scanTarget($target);
+            }
         }
         
         return true;
@@ -89,6 +88,7 @@ class ScanCommand extends Command
 
     public function scanTarget($targetConfig) 
     {
+
         $host = 'http://localhost:4444/wd/hub';
       
         $driver = RemoteWebDriver::create($host, DesiredCapabilities::firefox());
@@ -107,6 +107,11 @@ class ScanCommand extends Command
 
         foreach ($targets as $target) {
             if (isset($target['url'])) {
+
+                if (isset($target['url'])) {
+                   $this->output->writeln('* Target: '.$target['url']);
+                }
+
                 $driver->navigate()->to($target['url']);
             }            
         }
@@ -118,17 +123,23 @@ class ScanCommand extends Command
                 $this->output->writeln('asset: '. print_r($asset));
             }
 
-            $match = false;   
-            // if($asset['initiatorType'] == 'script') {
-                foreach ($whitelist as $whiteurl) {
-                    if(strpos($asset['name'], $whiteurl) !== false) {
-                        $match = true;
+            if(isset($asset['name'])) {
+                $match = false;   
+                // if($asset['initiatorType'] == 'script') {
+                    foreach ($whitelist as $whiteurl) {
+                        if(strpos($asset['name'], $whiteurl) !== false) {
+                            $match = true;
+                        }
+                    }                     
+    
+                    if (!$match) {
+                        $this->output->writeln('fails - '.$asset['name']);   
                     }
-                }                     
-
-                if (!$match) var_dump($asset['name']);   
-                
-            // }
+                    
+                // }
+            } else {
+                throw new \Exception("Assets aren't returning from the webdriver!");
+            }
         }
 
     }

@@ -6,8 +6,12 @@ help: ## This help
 
 .DEFAULT_GOAL := help
 
-launch: ## launches selenium from a docker container
+up: ## launches selenium from a docker container
 	docker run -p 4444:4444  selenium/standalone-firefox
+
+down: ## launches selenium from a docker container
+	docker down selenium/standalone-firefox
+
 
 tests: ## runs unit tests
 	vendor/bin/phpunit tests

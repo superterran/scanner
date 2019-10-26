@@ -11,6 +11,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "symfony/console": "^4.3"
+        "symfony/console": "^4.3",
+        "phpunit/phpunit": "^8.4"
     }
 }

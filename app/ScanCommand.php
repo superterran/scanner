@@ -16,6 +16,7 @@ use Facebook\WebDriver\Remote\RemoteWebDriver;
 class ScanCommand extends Command
 {
 
+    public $output = false;
     public $whitelist = array();
 
     protected static $defaultName = 'scan';
@@ -42,6 +43,9 @@ class ScanCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+        $this->output = &$output;
+
         $target = $input->getArgument('target');
         
         $config = $this->getConfig();
@@ -85,33 +89,46 @@ class ScanCommand extends Command
 
     public function scanTarget($targetConfig) 
     {
-
         $host = 'http://localhost:4444/wd/hub';
       
         $driver = RemoteWebDriver::create($host, DesiredCapabilities::firefox());
 
-        foreach ($targetConfig as $target) {
+        $targets = $targetConfig['targets'];
+
+        $whitelist = $this->getWhitelist();
+
+        if(isset($targetConfig['whitelist'])) {
+            foreach ($targetConfig['whitelist'] as $item) {
+                if(!in_array($item, $whitelist)) {
+                    $whitelist[] = $item;
+                }
+            }
+        }
+
+        foreach ($targets as $target) {
             if (isset($target['url'])) {
                 $driver->navigate()->to($target['url']);
             }            
         }
         $network = $driver->executeScript("return window.performance.getEntries();");
 
-        
-
         foreach($network as $asset)
         {         
+            if ($this->output->isVerbose()) {
+                $this->output->writeln('asset: '. print_r($asset));
+            }
+
             $match = false;   
-            if($asset['initiatorType'] == 'script') {
-                foreach (array_merge($this->getWhitelist(), $target['whitelist']) as $whitelist) {
-                    if(strpos($asset['name'], $whitelist) !== false) {
+            // if($asset['initiatorType'] == 'script') {
+                foreach ($whitelist as $whiteurl) {
+                    if(strpos($asset['name'], $whiteurl) !== false) {
                         $match = true;
                     }
                 }                     
 
                 if (!$match) var_dump($asset['name']);   
                 
-            }
+            // }
         }
 
     }
@@ -125,14 +142,28 @@ class ScanCommand extends Command
 
             $finder = new Finder();
     
-            $finder->files()->in(__DIR__.'/../')->name('whitelist.yml');
+            $finder->files()->in(getcwd())->name('whitelist.yml');
     
             if ($finder->hasResults()) {
                 foreach ($finder as $file) {
+  
+                    if ($this->output->isDebug()) {
+                        $this->output->writeln('fetching whitelist from: '.$file);
+                    }
+  
                     $whitelist = Yaml::parseFile($file->getRealPath());
+
+                    foreach ($whitelist as $item) {
+                        if(!in_array($item, $this->whitelist)) {
+                            $this->whitelist[] = $item;
+                        }
+                    }
                 }
             }
-            $this->whitelist = $whitelist;    
+
+            if ($this->output->isDebug()) {
+                $this->output->writeln('final whitelist: '. print_r($this->whitelist));
+            }
         }
         
         return $this->whitelist;

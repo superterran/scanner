@@ -10,22 +10,25 @@ class ScanCommandTest extends AbstractTest
     public $exampleFilename = __DIR__.'/../targets/fixture.yml';
     public $exampleContents = <<<EOD
 ---
-- url: https://wwww.google.com/
-  params:
-    - key: hello
-      value: world
-      type: GET
-  headers:
-    - key: header
-      value: world
-- url: https://wwww.google.com/checkout/
-  params:
-    - key: hello
-      value: world
-      type: GET
-  headers:
-    - key: header
-      value: world
+whitelist:
+  - //www.google.com/
+targets:
+  - url: https://www.google.com/
+    params:
+      - key: hello
+        value: world
+        type: GET
+    headers:
+      - key: header
+        value: world
+  - url: https://www.google.com/search
+    params:
+      - key: hello
+        value: world
+        type: GET
+    headers:
+      - key: header
+        value: world
 EOD;
 
     protected function setUp() : void
@@ -52,16 +55,22 @@ EOD;
         $config = $this->invokeMethod($obj, 'getConfig');
         $this->assertArrayHasKey('fixture.yml', $config);
 
-        $piece = $config['fixture.yml'];
+        $fixture = $config['fixture.yml'];
 
-        foreach ($piece as $target) {
+        $this->assertArrayHasKey('targets', $fixture);
+        $this->assertArrayHasKey('whitelist', $fixture);
+        $this->assertIsArray($fixture['whitelist']);
+        $this->assertIsArray($fixture['targets']);
+
+        $targets = $fixture['targets'];
+
+        foreach($targets as $target) {
+            $this->assertArrayHasKey('url', $target);
+
             $url = parse_url($target['url']);
             $this->assertArrayHasKey('scheme', $url);
             $this->assertArrayHasKey('host', $url);
             $this->assertArrayHasKey('path', $url);
-            
-            $this->assertArrayHasKey('headers', $target);
-            $this->assertArrayHasKey('params', $target);
 
             $headers = $target['headers'][0];
             $this->assertArrayHasKey('key', $headers);
@@ -71,8 +80,8 @@ EOD;
             $this->assertArrayHasKey('key', $params);
             $this->assertArrayHasKey('value', $params);
             $this->assertArrayHasKey('type', $params);
+
         }
-        
      
     }
 

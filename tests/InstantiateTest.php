@@ -12,7 +12,7 @@ class AppInstantiateTest extends TestCase
     public function testInstantiates()
     {
         // phpcs:disable Magento2.Security.InsecureFunction.Found
-        $output = shell_exec(__DIR__.'/../bin/scanner');
+        $output = shell_exec('php '. __DIR__ .'/../bin/scanner');
         // phpcs:enable
         $this->assertStringContainsString('Available commands', $output);
     }

@@ -6,8 +6,8 @@ use Symfony\Component\Console\Application;
 
 $loader = new \Composer\Autoload\ClassLoader();
 $loader->register();
-
-// $loader->setUseIncludePath(true);
+$loader->setUseIncludePath(true);
 
 $app = new Application('scanner');
+$app->add(new Superterran\Scanner\Command\ScanCommand());
 $app->run();

@@ -13,5 +13,10 @@
     "require": {
         "symfony/console": "^4.3",
         "phpunit/phpunit": "^8.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Superterran\\Scanner\\": ""
+        }
     }
 }

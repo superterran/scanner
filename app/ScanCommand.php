@@ -97,9 +97,9 @@ class ScanCommand extends Command
 
         $options = new ChromeOptions();
         $options->setBinary('/usr/bin/google-chrome');
-
+        $options->addArguments(["--headless","--disable-gpu", "--no-sandbox"]);
         $capabilities->setCapability(ChromeOptions::CAPABILITY, $options);
-
+        $capabilities->setPlatform("Linux");
 
 
         $driver = RemoteWebDriver::create($host, $capabilities);

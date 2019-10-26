@@ -6,9 +6,9 @@ help: ## This help
 
 .DEFAULT_GOAL := help
 selenium-start-docker: ## launches selenium from a docker container
-	docker run -p 4444:4444  selenium/standalone-chrome
+	docker run -p 4444:4444 --privileged selenium/standalone-chrome:latest
 selenium-start-firefox-docker: ## launches selenium from a docker container
-	docker run -p 4444:4444  selenium/standalone-firefox
+	docker run -p 4444:4444 selenium/standalone-firefox
 tests: ## runs unit tests
 	vendor/bin/phpunit tests
 selenium-start-firefox: selenium-download ## start selenium in a mode appropriate for firefox

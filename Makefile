@@ -6,7 +6,7 @@ help: ## This help
 
 .DEFAULT_GOAL := help
 selenium-start-docker: ## launches selenium from a docker container
-	docker run -p 4444:4444 --privileged selenium/standalone-chrome:latest
+	docker run -v /dev/shm:/dev/shm -m 8g -p 4444:4444 selenium/standalone-chrome-debug:3.6.0-bromine
 selenium-start-firefox-docker: ## launches selenium from a docker container
 	docker run -p 4444:4444 selenium/standalone-firefox
 tests: ## runs unit tests
@@ -17,3 +17,7 @@ selenium-start: selenium-download ## start selenium
 	java -jar selenium.jar
 selenium-download: ## downloads the selenium package
 	@if [[ ! -f selenium.jar ]]; then wget --output-document=selenium.jar http://selenium-release.storage.googleapis.com/3.9/selenium-server-standalone-3.9.1.jar; fi;
+selenium-hub-docker: ## create a selenium hub using a docker grid
+	#docker network create grid
+	docker run -d -p 4444:4444 --net grid --name selenium-hub selenium/hub:3.141.59-xenon
+	docker run --net grid -e HUB_HOST=selenium-hub -v /dev/shm:/dev/shm selenium/node-chrome:3.141.59-xenon

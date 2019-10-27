@@ -140,21 +140,21 @@ class ScanCommand extends Command
     
                     if(isset($asset['name'])) {
                         $match = false;   
-                        // if($asset['initiatorType'] == 'script') {
-                            foreach ($whitelist as $whiteurl) {
-                                if(strpos($asset['name'], $whiteurl) !== false) {
-                                    $match = true;
-                                }
-                            }                     
-            
-                            if (!$match) {
-                                $this->output->writeln('fails - '.$asset['name']);
-                                if ($this->output->isVerbose()) {
-                                    $this->output->writeln(print_r($asset));
-                                }   
+
+                        foreach ($whitelist as $whiteurl) {
+                            if(strpos($asset['name'], $whiteurl) !== false) {
+                                $match = true;
                             }
-                            
-                        // }
+                        }                     
+        
+                        if (!$match) {
+                            $this->output->writeln('fails - '.$asset['name']);
+                            if ($this->output->isVerbose()) {
+                                $this->output->writeln(print_r($asset));
+                            }   
+                        }
+                        
+
                     } else {
                         throw new \Exception("Assets aren't returning from the webdriver!");
                     }

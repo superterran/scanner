@@ -3,7 +3,6 @@ whitelist:
   - //www.google.com/
   - //ogs.google.com/
 targets:
-  - url: https://shop.cancer.org/readymade/makingstrides.html
   - url: https://www.google.com/
     params:
       - key: hello

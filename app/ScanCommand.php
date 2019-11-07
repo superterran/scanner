@@ -204,6 +204,14 @@ class ScanCommand extends Command
 
     }
 
+    protected function mwscan() 
+    {
+        $tmpdir = getcwd()."/tmp/";
+
+        $this->output->writeln("\n\n Running mwscan against ".$tmpdir."\n");
+        echo shell_exec("mwscan -d ".getcwd()."/tmp/");
+    }
+
     protected function clamscan() 
     {
         $this->downloadList($this->downloadList);
@@ -213,9 +221,7 @@ class ScanCommand extends Command
         $this->output->writeln("\n\n Running clamscan against ".$tmpdir."\n");
         echo shell_exec("clamscan ".getcwd()."/tmp/");
 
-        if ($this->output->isDebug()) {
-            $this->output->writeln('purging '.$tmpdir);
-        }
+        $this->mwscan();
     }
 
     protected function downloadList()

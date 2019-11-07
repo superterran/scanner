@@ -53,6 +53,8 @@ class ScanCommand extends Command
         
         $config = $this->getConfig();
 
+        $this->clamscanInit();
+
         if ($target) {
             if(isset($config[$target.'.yml'])) {
                 $this->scanTarget($config[$target.'.yml']);
@@ -68,6 +70,9 @@ class ScanCommand extends Command
             }
         }
         
+
+        $this->clamscan();
+
         return true;
     }
 
@@ -109,6 +114,8 @@ class ScanCommand extends Command
 
         $whitelist = $this->getWhitelist();
 
+        $downloadList = array();
+
         if(isset($targetConfig['whitelist'])) {
             foreach ($targetConfig['whitelist'] as $item) {
                 if(!in_array($item, $whitelist)) {
@@ -129,27 +136,17 @@ class ScanCommand extends Command
         
             $network = $driver->executeScript("return window.performance.getEntries();");
             
-            
-            if (!is_dir($tmpdir)) {
-                if ($this->output->isDebug()) {
-                    $this->output->writeln('creating '.$tmpdir);
-                }
-                mkdir(getcwd()."/tmp/", 0700);
-            } else {
-                if ($this->output->isDebug()) {
-                    $this->output->writeln('purging '.$tmpdir);
-                }
-                array_map( 'unlink', array_filter((array) glob(getcwd()."/tmp/*.supa") ) );
-            }
-
 
             foreach($network as $asset)
             {         
 
                 if (isset($asset['entryType']) && !in_array($asset['entryType'], self::ignoreEntryTypes)) {
 
-                    file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($asset['name'], 'r'));
+                    if ($asset['entryType'] == "resource") {
 
+                        $downloadList[] = $asset['name'];
+                    }                    
+                    
                     if ($this->output->isDebug()) {
                         $this->output->writeln('asset: ');
                         $this->output->writeln(print_r($asset));
@@ -182,20 +179,55 @@ class ScanCommand extends Command
                     }
                 }
             }
+        }
+
+        $driver->quit();
 
 
-            $this->output->writeln("\n\n Running clamscan against ".$tmpdir."\n");
-            echo shell_exec("clamscan ".getcwd()."/tmp/".uniqid());
+        # lets run clamav
 
+        $this->downloadList($downloadList);
+ 
+        
+    }
+
+    protected function clamscanInit()
+    {
+
+        $tmpdir = getcwd()."/tmp/";
+
+        if (!is_dir($tmpdir)) {
+            if ($this->output->isDebug()) {
+                $this->output->writeln('creating '.$tmpdir);
+            }
+            mkdir(getcwd()."/tmp/", 0700);
+        } else {
             if ($this->output->isDebug()) {
                 $this->output->writeln('purging '.$tmpdir);
             }
             array_map( 'unlink', array_filter((array) glob(getcwd()."/tmp/*.supa") ) );
-
-
         }
 
-        $driver->quit();
+    }
+
+    protected function clamscan() 
+    {
+        $tmpdir = getcwd()."/tmp/";
+
+        $this->output->writeln("\n\n Running clamscan against ".$tmpdir."\n");
+        echo shell_exec("clamscan ".getcwd()."/tmp/");
+
+        if ($this->output->isDebug()) {
+            $this->output->writeln('purging '.$tmpdir);
+        }
+        // array_map( 'unlink', array_filter((array) glob(getcwd()."/tmp/*.supa") ) );
+    }
+
+    protected function downloadList($list)
+    {
+        foreach($list as $item) {
+            file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($item, 'r'));
+        }        
     }
 
     protected function getWhitelist()

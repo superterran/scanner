@@ -54,8 +54,11 @@ class ScanUrlCommand extends ScanCommand
             'whitelist' => array('//'.$url.'/', '//www.'.$url.'/')
         );
 
+        $this->clamscanInit();
+
         $this->scanTarget($target);
 
+        $this->clamscan();
         
         return true;
     }

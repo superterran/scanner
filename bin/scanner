@@ -12,4 +12,5 @@ $loader->setUseIncludePath(true);
 
 $app = new Application('scanner');
 $app->add(new Superterran\Scanner\ScanCommand());
+$app->add(new Superterran\Scanner\ScanUrlCommand());
 $app->run();

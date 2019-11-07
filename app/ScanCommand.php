@@ -101,6 +101,7 @@ class ScanCommand extends Command
         $capabilities->setCapability(ChromeOptions::CAPABILITY, $options);
         $capabilities->setPlatform("Linux");
 
+        $tmpdir = getcwd()."/tmp/";
 
         $driver = RemoteWebDriver::create($host, $capabilities);
 
@@ -128,10 +129,26 @@ class ScanCommand extends Command
         
             $network = $driver->executeScript("return window.performance.getEntries();");
             
+            
+            if (!is_dir($tmpdir)) {
+                if ($this->output->isDebug()) {
+                    $this->output->writeln('creating '.$tmpdir);
+                }
+                mkdir(getcwd()."/tmp/", 0700);
+            } else {
+                if ($this->output->isDebug()) {
+                    $this->output->writeln('purging '.$tmpdir);
+                }
+                array_map( 'unlink', array_filter((array) glob(getcwd()."/tmp/*.supa") ) );
+            }
+
 
             foreach($network as $asset)
             {         
+
                 if (isset($asset['entryType']) && !in_array($asset['entryType'], self::ignoreEntryTypes)) {
+
+                    file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($asset['name'], 'r'));
 
                     if ($this->output->isDebug()) {
                         $this->output->writeln('asset: ');
@@ -165,6 +182,17 @@ class ScanCommand extends Command
                     }
                 }
             }
+
+
+            $this->output->writeln("\n\n Running clamscan against ".$tmpdir."\n");
+            echo shell_exec("clamscan ".getcwd()."/tmp/".uniqid());
+
+            if ($this->output->isDebug()) {
+                $this->output->writeln('purging '.$tmpdir);
+            }
+            array_map( 'unlink', array_filter((array) glob(getcwd()."/tmp/*.supa") ) );
+
+
         }
 
         $driver->quit();

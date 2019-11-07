@@ -17,6 +17,12 @@ $ composer install
 $ make selenium-start-docker
 $ bin/scanner scan
 ```
+
+## ClamAV
+
+If detected, this scanner will pipe each asset through clamav. You should install clamav.
+
+
 ### Quick Scan
 
 You can run the scanner against any url with the default settings with `bin/scanner scan:url example.com`

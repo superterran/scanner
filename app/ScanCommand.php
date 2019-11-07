@@ -19,6 +19,8 @@ class ScanCommand extends Command
 
     public $output = false;
     public $whitelist = array();
+    public $downloadList = array();
+
 
     public const ignoreEntryTypes = ['paint', 'measure', 'mark'];
 
@@ -114,8 +116,6 @@ class ScanCommand extends Command
 
         $whitelist = $this->getWhitelist();
 
-        $downloadList = array();
-
         if(isset($targetConfig['whitelist'])) {
             foreach ($targetConfig['whitelist'] as $item) {
                 if(!in_array($item, $whitelist)) {
@@ -144,7 +144,7 @@ class ScanCommand extends Command
 
                     if ($asset['entryType'] == "resource") {
 
-                        $downloadList[] = $asset['name'];
+                        $this->downloadList[] = $asset['name'];
                     }                    
                     
                     if ($this->output->isDebug()) {
@@ -183,12 +183,6 @@ class ScanCommand extends Command
 
         $driver->quit();
 
-
-        # lets run clamav
-
-        $this->downloadList($downloadList);
- 
-        
     }
 
     protected function clamscanInit()
@@ -212,6 +206,8 @@ class ScanCommand extends Command
 
     protected function clamscan() 
     {
+        $this->downloadList($this->downloadList);
+
         $tmpdir = getcwd()."/tmp/";
 
         $this->output->writeln("\n\n Running clamscan against ".$tmpdir."\n");
@@ -220,13 +216,21 @@ class ScanCommand extends Command
         if ($this->output->isDebug()) {
             $this->output->writeln('purging '.$tmpdir);
         }
-        // array_map( 'unlink', array_filter((array) glob(getcwd()."/tmp/*.supa") ) );
     }
 
-    protected function downloadList($list)
+    protected function downloadList()
     {
-        foreach($list as $item) {
-            file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($item, 'r'));
+        $this->output->writeln("\n\nDownloading assets for Malware Scanning. This may take a while...\n\n");
+
+
+        foreach($this->downloadList as $item) {
+            try {
+                file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($item, 'r'));
+            } catch (Exception $e) {
+                $this->output->writeln("Unable to download ".$item."\n");
+
+            }
+            
         }        
     }
 

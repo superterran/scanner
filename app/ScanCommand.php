@@ -225,7 +225,7 @@ class ScanCommand extends Command
 
         foreach($this->downloadList as $item) {
             try {
-                file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($item, 'r'));
+                @file_put_contents(getcwd()."/tmp/".uniqid().'.supa', fopen($item, 'r'));
             } catch (Exception $e) {
                 $this->output->writeln("Unable to download ".$item."\n");
 

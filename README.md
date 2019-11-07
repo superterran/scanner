@@ -14,9 +14,13 @@ To run this scanner as-is, clone down this repo, and then run from within:
 
 ```
 $ composer install
-$ make -C vendor/superterran/scanner/ selenium-start-docker
-$ vendor/bin/scanner scan
+$ make selenium-start-docker
+$ bin/scanner scan
 ```
+### Quick Scan
+
+You can run the scanner against any url with the default settings with `bin/scanner scan:url example.com`
+
 ## Creating and running from a Targets repo
 
 Probably the best way to run this tool is to create a private repo with a set of targets, and run the tool against that. 

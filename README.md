@@ -23,6 +23,10 @@ $ bin/scanner scan
 If detected, this scanner will pipe each asset through clamav. You should install clamav.
 
 
+## mwscan
+
+If detected, this scanner will pipe each asset through mwscan. You should install mwscan, even if it's no longer maintained. 
+
 ### Quick Scan
 
 You can run the scanner against any url with the default settings with `bin/scanner scan:url example.com`

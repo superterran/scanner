@@ -1,0 +1,1 @@
+FROM selenium/standalone-chrome-debug:3.6.0-bromine
